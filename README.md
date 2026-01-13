@@ -1,48 +1,23 @@
-# ssl-handshake-check
+# Ssl Handshake Check
 
-The `ssl-handshake-check` verifies a TLS handshake succeeds for a configured domain and port using the available certificate authorities.
+Kuberhealthy's SSL handshare check
 
-## Configuration
+## What it is
+This repository builds the container image used by Kuberhealthy to run the ssl-handshake-check check.
 
-Set these environment variables in the `HealthCheck` spec:
+## Image
+- `docker.io/kuberhealthy/ssl-handshake-check`
+- Tags: short git SHA for `main` pushes and `vX.Y.Z` for releases.
 
-- `DOMAIN_NAME` (required): domain name to check.
-- `PORT` (required): TLS port to check (for example, `443`).
-- `SELF_SIGNED` (required): set to `true` when using self-signed certificates.
+## Quick start
+- Apply the example manifest: `kubectl apply -f healthcheck.yaml`
+- Edit the manifest to set any required inputs for your environment.
 
-If you use a custom certificate, mount it at `/etc/ssl/selfsign/certificate.crt` as shown in the file-based example.
+## Build locally
+- `docker build -f ./Containerfile -t kuberhealthy/ssl-handshake-check:dev .`
 
-## Build
+## Contributing
+Issues and PRs are welcome. Please keep changes focused and add a short README update when behavior changes.
 
-- `just build` builds the container image locally.
-- `just test` runs unit tests.
-- `just binary` builds the binary in `bin/`.
-
-## Example HealthCheck
-
-Apply the example below or the provided `healthcheck.yaml`:
-
-```yaml
-apiVersion: kuberhealthy.github.io/v2
-kind: HealthCheck
-metadata:
-  name: ssl-handshake
-  namespace: kuberhealthy
-spec:
-  runInterval: 5m
-  timeout: 10m
-  podSpec:
-    spec:
-      containers:
-        - name: ssl-handshake
-          image: kuberhealthy/ssl-handshake-check:sha-<short-sha>
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: DOMAIN_NAME
-              value: "kubernetes.default"
-            - name: PORT
-              value: "443"
-            - name: SELF_SIGNED
-              value: "true"
-      restartPolicy: Never
-```
+## License
+See `LICENSE`.
